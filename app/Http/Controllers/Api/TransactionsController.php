@@ -65,14 +65,15 @@ class TransactionsController extends Controller
             return $this->errorResponse('Operation failded. Insufficient account balance.');
         }
 
+        // Update the user's account balance.
+        $tx->account->accountBalance -= abs($params['amount']);
+        $tx->account->save();
+
         // Update the tx..
         $tx->amount = $params['amount'];
         $tx->transactionStatus = 1;
         $tx->save();
 
-        // Update the user's account balance.
-        $tx->account->accountBalance -= $params['amount'];
-        $tx->account->save();
 
         //reload without the account details
         $tx = Transaction::find($tx->id);
